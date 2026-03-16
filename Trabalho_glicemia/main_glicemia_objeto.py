@@ -15,5 +15,4 @@ print('Quantidade de dados lidos: ', len(lista_glicemica))
 for linha in lista_glicemica:
     print(linha, end="")
 
-print('Media Glicemica', Glicemia.calcular_media(lista_glicemica))
 print('Turno com maior glicemia:', Glicemia.verificar_turno_maior_glicemia(lista_glicemica))
