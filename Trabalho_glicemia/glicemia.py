@@ -43,20 +43,16 @@ class Glicemia:
                 tarde.append(int(item.valor))
             elif '18:00' <= item.hora < '05:00':
                 noite.append(int(item.valor))
-        
-        lista.calcular_media(manha)
-        lista.calcular_media(tarde)
-        lista.calcular_media(noite)
 
         if lista.calcular_media(manha) > lista.calcular_media(tarde) and lista.calcular_media(manha) > lista.calcular_media(noite):
-            return 'Manhã',media(manha)
+            return 'Manhã',lista.calcular_media(manha)
         elif lista.calcular_media(tarde) > lista.calcular_media(manha) and lista.calcular_media(tarde) > lista.calcular_media(noite):
-            return 'Tarde',media(tarde)
+            return 'Tarde',lista.calcular_media(tarde)
         elif lista.calcular_media(noite) > lista.calcular_media(manha) and lista.calcular_media(noite) > lista.calcular_media(tarde):
-            return 'Noite',media(noite)
+            return 'Noite',lista.calcular_media(noite)
         elif lista.calcular_media(manha) == lista.calcular_media(tarde) and lista.calcular_media(manha) > lista.calcular_media(noite):
-            return 'Manhã e Tarde',media(manha)
+            return 'Manhã e Tarde',lista.calcular_media(manha)
         elif lista.calcular_media(manha) == lista.calcular_media(noite) and lista.calcular_media(manha) > lista.calcular_media(tarde):
-            return 'Manhã e Noite',media(manha)
+            return 'Manhã e Noite',lista.calcular_media(manha)
         elif lista.calcular_media(tarde) == lista.calcular_media(noite) and lista.calcular_media(tarde) > lista.calcular_media(manha):
-            return 'Tarde e Noite',media(tarde)
+            return 'Tarde e Noite',lista.calcular_media(tarde)
