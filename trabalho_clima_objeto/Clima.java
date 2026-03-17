@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Sabendo que Verão são os meses Dezembro, Janeiro, Fevereiro, Março. Que Outono 
-// são os meses Abril, Maio, Junho, Julho. Que Inverno são os meses Agosto, Setembro, Outubro, Novembro.
+// são os meses Abril, Maio, Junho, Julho. Que Inverno são os meses Agosto, Setembro Primavera: Outubro, Novembro.
 
 //Preciso descobrir dentro da base dadosClimaticos.csv qual a estação que menos chove; 
 // qual a estação que mais chove; qual a estação mais quente; qual a estação mais amena.
@@ -52,13 +52,14 @@ public class Clima {
             case "Abril":
             case "Maio":
             case "Junho":
-            case "Julho":
                 return "Outono";
+            case "Julho":
             case "Agosto":
             case "Setembro":
+                return "Inverno";
             case "Outubro":
             case "Novembro":
-                return "Inverno";
+                return "Primavera";
             default:
                 return "Desconhecida";
         }
@@ -97,7 +98,7 @@ public class Clima {
      * Exemplo: estação "Verão" e temperatura "Quente".
      *
      * @param lista lista completa de climas
-     * @param estacao estação desejada (Verão, Outono, Inverno)
+     * @param estacao estação desejada (Verão, Outono, Inverno, Primavera)
      * @param temperatura temperatura desejada (Quente, Ameno, Frio)
      * @return nova lista contendo apenas os itens filtrados
      */
@@ -120,9 +121,10 @@ public class Clima {
      * @param quantidadeVerao quantidade de ocorrências no verão
      * @param quantidadeOutono quantidade de ocorrências no outono
      * @param quantidadeInverno quantidade de ocorrências no inverno
+     * @param quantidadePrimavera quantidade de ocorrências na primavera
      * @return nome da estação com maior quantidade
      */
-    public static String descobrirEstacaoMaiorQuantidade(int quantidadeVerao, int quantidadeOutono, int quantidadeInverno) {
+    public static String descobrirEstacaoMaiorQuantidade(int quantidadeVerao, int quantidadeOutono, int quantidadeInverno, int quantidadePrimavera) {
         String estacao = "Verão";
         int maior = quantidadeVerao;
 
@@ -132,6 +134,9 @@ public class Clima {
         }
         if (quantidadeInverno > maior) {
             estacao = "Inverno";
+        }
+        if (quantidadePrimavera > maior) {
+            estacao = "Primavera";
         }
 
         return estacao;
@@ -180,12 +185,14 @@ public class Clima {
 
     //funcao principal roda todas as funcoes: lê o csv, separa por estacao e imprime os resultados
     public static void main(String[] args) {
-        List<Clima> todosClimas = lerCsv("Downloads\\dadosClimaticos.csv");
+        List<Clima> todosClimas = lerCsv("Downloads\\trabalho_clima_objeto\\dadosClimaticos.csv");
 
         List<Clima> verao = new ArrayList<>();
         List<Clima> outono = new ArrayList<>();
         List<Clima> inverno = new ArrayList<>();
-
+        List<Clima> primavera = new ArrayList<>();
+        
+        // Divide os climas em listas menores por estação usando a função getEstacao()
         for (Clima clima : todosClimas) {
             switch (clima.getEstacao()) {
                 case "Verão":
@@ -197,22 +204,28 @@ public class Clima {
                 case "Inverno":
                     inverno.add(clima);
                     break;
+                case "Primavera":
+                    primavera.add(clima);
+                    break;
             }
         }
 
         System.out.println("Verão: " + verao);
         System.out.println("Outono: " + outono);
         System.out.println("Inverno: " + inverno);
+        System.out.println("Primavera: " + primavera);
 
         // Calcula o total de peso de precipitação por estação
         int pesoVerao  = calcularPesoPrecipitacaoTotal(verao);
         int pesoOutono = calcularPesoPrecipitacaoTotal(outono);
         int pesoInverno = calcularPesoPrecipitacaoTotal(inverno);
+        int pesoPrimavera = calcularPesoPrecipitacaoTotal(primavera);
 
         System.out.println("\nPeso total de precipitação:");
         System.out.println("  Verão:  " + pesoVerao);
         System.out.println("  Outono: " + pesoOutono);
         System.out.println("  Inverno: " + pesoInverno);
+        System.out.println("  Primavera: " + pesoPrimavera);
 
         // Descobre a estação que mais chove (maior peso)
         String estacaoMaisChove = "Verão";
@@ -223,6 +236,9 @@ public class Clima {
         }
         if (pesoInverno > maiorPeso) {
             estacaoMaisChove = "Inverno";
+        }
+        if (pesoPrimavera > maiorPeso) {
+            estacaoMaisChove = "Primavera";
         }
 
         // Descobre a estação que menos chove (menor peso)
@@ -235,6 +251,9 @@ public class Clima {
         if (pesoInverno < menorPeso) {
             estacaoMenosChove = "Inverno";
         }
+        if (pesoPrimavera < menorPeso) {
+            estacaoMenosChove = "Primavera";
+        }
 
         System.out.println("\nEstação que MAIS chove: " + estacaoMaisChove);
         System.out.println("Estação que MENOS chove: " + estacaoMenosChove);
@@ -243,29 +262,32 @@ public class Clima {
         List<Clima> verao_quente = filtrarPorEstacaoETemperatura(todosClimas, "Verão", "Quente");
         List<Clima> outono_quente = filtrarPorEstacaoETemperatura(todosClimas, "Outono", "Quente");
         List<Clima> inverno_quente = filtrarPorEstacaoETemperatura(todosClimas, "Inverno", "Quente");
+        List<Clima> primavera_quente = filtrarPorEstacaoETemperatura(todosClimas, "Primavera", "Quente");
 
         // Define listas por estação + temperatura (ameno)
         List<Clima> verao_ameno = filtrarPorEstacaoETemperatura(todosClimas, "Verão", "Ameno");
         List<Clima> outono_ameno = filtrarPorEstacaoETemperatura(todosClimas, "Outono", "Ameno");
         List<Clima> inverno_ameno = filtrarPorEstacaoETemperatura(todosClimas, "Inverno", "Ameno");
+        List<Clima> primavera_ameno = filtrarPorEstacaoETemperatura(todosClimas, "Primavera", "Ameno");
 
         // Descobre a estação mais quente (mais registros "Quente" verificando o tamanho da lista com size())
         String estacaoMaisQuente = descobrirEstacaoMaiorQuantidade(
-            verao_quente.size(), outono_quente.size(), inverno_quente.size());
-
+            verao_quente.size(), outono_quente.size(), inverno_quente.size(), primavera_quente.size());
         // Descobre a estação mais amena (mais registros "Ameno" verificando o tamanho da lista com size())
         String estacaoMaisAmena = descobrirEstacaoMaiorQuantidade(
-            verao_ameno.size(), outono_ameno.size(), inverno_ameno.size());
+            verao_ameno.size(), outono_ameno.size(), inverno_ameno.size(), primavera_ameno.size());
 
         System.out.println("\nQuantidade de registros 'Quente':");
         System.out.println("  Verão: " + verao_quente.size());
         System.out.println("  Outono: " + outono_quente.size());
         System.out.println("  Inverno: " + inverno_quente.size());
+        System.out.println("  Primavera: " + primavera_quente.size());
 
         System.out.println("\nQuantidade de registros 'Ameno':");
         System.out.println("  Verão: " + verao_ameno.size());
         System.out.println("  Outono: " + outono_ameno.size());
         System.out.println("  Inverno: " + inverno_ameno.size());
+        System.out.println("  Primavera: " + primavera_ameno.size());
 
         System.out.println("\nEstação MAIS quente: " + estacaoMaisQuente);
         System.out.println("Estação MAIS amena: " + estacaoMaisAmena);
