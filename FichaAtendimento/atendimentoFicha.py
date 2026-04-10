@@ -27,22 +27,21 @@ class FichaAtendimento:
     
     @staticmethod
     def gera_atendimento(fila_normal, fila_prioritaria, contador_atendimentos):
-        if (fila_normal.isEmpty() and fila_prioritaria.isEmpty()):
+        if not fila_normal and not fila_prioritaria:
             print("Nao ha fichas para chamar")
             return contador_atendimentos
 
     @staticmethod
     def mostra_fichas_faltantes(fila_normal, fila_prioritaria):
-        if (fila_normal.isEmpty() and fila_prioritaria.isEmpty()) {
-            print("Nao ha fichas para chamar");
-        }
+        if not fila_normal and not fila_prioritaria:
+            print("Nao ha fichas para chamar")
+        
         print("Mostrando fichas faltantes.... ")
-        if (!self.fila_normal.isEmpty()) {
-            print("Total de fichas faltantes: " + self.fila_normal.size() + " - " + self.fila_normal);
-        }
-        if (!self.fila_prioritaria.isEmpty()) {
-            print("Total de fichas faltantes: " + self.fila_prioritaria.size() + " - " + self.fila_prioritaria);
-        }
+        if not fila_normal:
+            print("Total de fichas faltantes: " + str(len(fila_normal)) + " - " + str(list(fila_normal)))
+        
+        if not fila_prioritaria:
+            print("Total de fichas faltantes: " + str(len(fila_prioritaria)) + " - " + str(list(fila_prioritaria)))
 
     @staticmethod
     def menu():
