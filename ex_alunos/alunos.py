@@ -28,6 +28,13 @@ class Aluno:
     def __str__(self):
         return f"{self.nome} - {self.curso} - {self.sexo} - {self.ano_ingresso}"
 
+    """_summary_
+    método fornecido por IA para ler arquivo e guardar em lista. separando atributos por vírgula e os objetos por nova linha
+
+    
+    Args:
+        arquivo (str): caminho do arquivo .csv com os registros
+    """
     @staticmethod
     def ler_alunos(arquivo):
         alunos = []
