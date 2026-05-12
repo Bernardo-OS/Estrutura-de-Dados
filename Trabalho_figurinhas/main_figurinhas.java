@@ -1,12 +1,19 @@
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import Figura;
 
 public static void main(String[] args) {
-    alimentar_listas_csv(lista_repetidas_pessoais, lista_desejadas_pessoais, lista_repetidas_outro, lista_desejadas_outro);
-
-    List<Clima> lista_desejadas_pessoais = new ArrayList<>();
-    List<Clima> lista_repetidas_pessoais = new ArrayList<>();
-    List<Clima> lista_desejadas_outro = new ArrayList<>();
-    List<Clima> lista_repetidas_outro = new ArrayList<>();
+    List<Figura> lista_desejadas_pessoais = new ArrayList<>();
+    List<Figura> lista_repetidas_pessoais = new ArrayList<>();
+    List<Figura> lista_desejadas_outro = new ArrayList<>();
+    List<Figura> lista_repetidas_outro = new ArrayList<>();
+    Figura.alimentar_listas_csv(lista_repetidas_pessoais, lista_desejadas_pessoais, lista_repetidas_outro, lista_desejadas_outro);
     System.out.println("Menu:\r\n" + //
                 "1-Cadastrar/listar figuras repitidas pessoais\r\n" + //
                 "2-Cadastrar/listar figuras desejadas pessoais\r\n" + //
