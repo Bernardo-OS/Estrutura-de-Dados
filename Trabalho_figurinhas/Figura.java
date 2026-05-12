@@ -86,6 +86,7 @@ public class Figura {
         Scanner numeroFigura = new Scanner(System.in);
         System.out.println("Digite a descrição da figura desejada:");
         Scanner descricao = new Scanner(System.in);
+        numeroFigura.nextInt();
         isRara = false;
         salvarCsv("figuras_desejadas_pessoais.csv", lista_desejadas_pessoais);
         // Lógica para criar objetos figura e guardar na lista e salvar no CSV
@@ -105,7 +106,7 @@ public class Figura {
         Scanner numeroFigura = new Scanner(System.in);
         System.out.println("Digite a descrição da figura desejada:");
         Scanner descricao = new Scanner(System.in);
-        isRara = false;
+        figura.isRara() = false;
         salvarCsv("figuras_repetidas_pessoais.csv", lista_repetidas_pessoais);
         // Lógica para criar objetos figura e guardar na lista e salvar no CSV
     }
