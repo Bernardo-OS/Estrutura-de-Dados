@@ -7,27 +7,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Scanner;
-/** 
- Classe Figura
--nomeFigura: String
--numeroFigura: int
--descricao: String
--rara: boolean
 
-Menu:
-1-Cadastrar/listar figuras repitidas pessoais
-2-Cadastrar/listar figuras desejadas pessoais
-3-Cadastrar/listar figuras repitidas de outro + match
-4-Cadastrar/listar figuras desejadas de outro + match
-5-Sair
-Opcao:
-
-arquivos.csv/listas:
-    figuras_repetidas_pessoais.csv
-    figuras_desejadas_pessoais.csv
-    figuras_repetidas_outro.csv
-    figuras_desejadas_outro.csv
-**/
+/**
+ * Anotação lógica para peso de figurinhas:
+ * Bronze: 2 Roxas
+ * Prata: 5 Roxas || 2.5 Bronzes
+ * Ouro: 10 Roxas || 6 Bronzes || 2 Pratas
+ */
 
 public class Figura {
     private String nomeFigura;
@@ -65,7 +51,7 @@ public class Figura {
      * @param lista_repetidas_outro
      * @param lista_desejadas_outro
      */
-    public void alimentar_listas_csv(List<Figura> lista_repetidas_pessoais, List<Figura> lista_desejadas_pessoais, List<Figura> lista_repetidas_outro, List<Figura> lista_desejadas_outro) {
+    public static void alimentar_listas_csv(List<Figura> lista_repetidas_pessoais, List<Figura> lista_desejadas_pessoais, List<Figura> lista_repetidas_outro, List<Figura> lista_desejadas_outro) {
         carregarCsv("figuras_repetidas_pessoais.csv", lista_repetidas_pessoais);
         carregarCsv("figuras_desejadas_pessoais.csv", lista_desejadas_pessoais);
         carregarCsv("figuras_repetidas_outro.csv", lista_repetidas_outro);
@@ -73,42 +59,137 @@ public class Figura {
     }
 
     /**
-     * Lógica para cadastrar figuras desejadas pessoais, exibindo as já cadastradas e salvando no CSV.
+     * Lógica para cadastrar figuras desejadas pessoais, exibindo as já cadastradas, fazendo leitura por meio do scanner 
+     * para novos registros, e depois salva no CSV para atualizar os resitros.
      * @param lista_desejadas_pessoais
      */
-    public void cadastrar_desejadas_pessoais(List<Figura> lista_desejadas_pessoais) {
+    public static void cadastrar_desejadas_pessoais(List<Figura> lista_desejadas_pessoais) {
         for (Figura figura : lista_desejadas_pessoais) {
             System.out.println("Figura: " + figura.getNomeFigura() + ", Número: " + figura.getNumeroFigura() + ", Descrição: " + figura.getDescricao() + ", Rara: " + figura.isRara());
         }
+        //sendo Java, necessita usar um scanner para ler os dados enformados pelo usuário como um input
+        //Depois criar um novo objeto figura, 
+        //Após adicionando-o à lista para salvar no CSV correspondente pelo método salvarCsv.
+        Scanner scanner = new Scanner(System.in);
+        
         System.out.println("Digite o nome da figura desejada:");
-        Scanner nomeFigura = new Scanner(System.in);
+        String nomeFigura = scanner.nextLine();
+        
         System.out.println("Digite o número da figura desejada:");
-        Scanner numeroFigura = new Scanner(System.in);
+        int numeroFigura = scanner.nextInt();
+        scanner.nextLine(); // Limpa o buffer
+        
         System.out.println("Digite a descrição da figura desejada:");
-        Scanner descricao = new Scanner(System.in);
-        numeroFigura.nextInt();
-        isRara = false;
+        String descricao = scanner.nextLine();
+        
+        boolean rara = false;
+        
+        Figura novaFigura = new Figura(nomeFigura, numeroFigura, descricao, rara);
+        lista_desejadas_pessoais.add(novaFigura);
+        
         salvarCsv("figuras_desejadas_pessoais.csv", lista_desejadas_pessoais);
-        // Lógica para criar objetos figura e guardar na lista e salvar no CSV
     }
 
     /**
-     * Lógica para cadastrar figuras repetidas pessoais, exibindo as já cadastradas e salvando no CSV.
+     * Lógica para cadastrar figuras repetidas pessoais, exibindo as já cadastradas, fazendo leitura por meio do scanner 
+     * para novos registros, e depois salva no CSV para atualizar os resitros.
      * @param lista_repetidas_pessoais
      */
-    public void cadastrar_repitidas_pessoais(List<Figura> lista_repetidas_pessoais) {
+    public static void cadastrar_repitidas_pessoais(List<Figura> lista_repetidas_pessoais) {
         for (Figura figura : lista_repetidas_pessoais) {
             System.out.println("Figura: " + figura.getNomeFigura() + ", Número: " + figura.getNumeroFigura() + ", Descrição: " + figura.getDescricao() + ", Rara: " + figura.isRara());
         }
-        System.out.println("Digite o nome da figura desejada:");
-        Scanner nomeFigura = new Scanner(System.in);
-        System.out.println("Digite o número da figura desejada:");
-        Scanner numeroFigura = new Scanner(System.in);
-        System.out.println("Digite a descrição da figura desejada:");
-        Scanner descricao = new Scanner(System.in);
-        figura.isRara() = false;
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("Digite o nome da figura repetida:");
+        String nomeFigura = scanner.nextLine();
+        
+        System.out.println("Digite o número da figura repetida:");
+        int numeroFigura = scanner.nextInt();
+        scanner.nextLine(); // Limpa o buffer
+        
+        System.out.println("Digite a descrição da figura repetida:");
+        String descricao = scanner.nextLine();
+        
+        boolean rara = false;
+        
+        Figura novaFigura = new Figura(nomeFigura, numeroFigura, descricao, rara);
+        lista_repetidas_pessoais.add(novaFigura);
+        
         salvarCsv("figuras_repetidas_pessoais.csv", lista_repetidas_pessoais);
-        // Lógica para criar objetos figura e guardar na lista e salvar no CSV
+    }
+
+    /**
+     * Lógica para mostrar os matches entre as figuras desejadas pessoais e repetidas do outro, e entre as figuras repetidas pessoais e desejadas do outro.
+     * @param lista_desejadas_pessoais
+     * @param lista_repetidas_outro
+     * @param lista_repetidas_pessoais
+     * @param lista_desejadas_outro
+     */
+    public static void mostrar_match(List<Figura> lista_desejadas_pessoais, List<Figura> lista_repetidas_outro, List<Figura> lista_repetidas_pessoais, List<Figura> lista_desejadas_outro) {
+        System.out.println("Figuras desejadas pessoais que são repetidas do outro:");
+        /**
+         * Rodando para cada loop em uma lista, um outro dentro conferindo todos se correspondem em Nome, 
+         * (pela função java equalsIgnoreCase que compara string ignorando maiúsculas/minúsculas), e Número, 
+         * e se há match, exibe.
+         */
+        for (Figura desejada : lista_desejadas_pessoais) {
+            for (Figura repetidaOutro : lista_repetidas_outro) {
+                if (desejada.getNomeFigura().equalsIgnoreCase(repetidaOutro.getNomeFigura()) &&
+                    desejada.getNumeroFigura() == repetidaOutro.getNumeroFigura()) {
+                    System.out.println("Match encontrado: " + desejada.getNomeFigura() + " - Número: " + desejada.getNumeroFigura());
+                }
+            }
+        }
+
+        System.out.println("\nFiguras repetidas pessoais que são desejadas do outro:");
+        for (Figura repetida : lista_repetidas_pessoais) {
+            for (Figura desejadaOutro : lista_desejadas_outro) {
+                if (repetida.getNomeFigura().equalsIgnoreCase(desejadaOutro.getNomeFigura()) &&
+                    repetida.getNumeroFigura() == desejadaOutro.getNumeroFigura()) {
+                    System.out.println("Match encontrado: " + repetida.getNomeFigura() + " - Número: " + repetida.getNumeroFigura());
+                }
+            }
+        }
+    }
+
+    /**
+     * Lógica para registrar uma troca, onde o usuário informa o nome e número da figura que deseja trocar, e o programa verifica 
+     * se essa figura está na lista de repetidas pessoais. Se estiver, a figura é removida da lista de repetidas pessoais 
+     * e os arquivos CSV são atualizados.
+     * @param lista_repetidas_pessoais
+     * @param lista_desejadas_pessoais
+     */
+    public static void registrar_troca(List<Figura> lista_repetidas_pessoais) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("Digite o nome da figura que deseja trocar:");
+        String nomeFigura = scanner.nextLine();
+        
+        System.out.println("Digite o número da figura que deseja trocar:");
+        int numeroFigura = scanner.nextInt();
+        scanner.nextLine(); // Limpa o buffer
+        
+        Figura figuraParaTrocar = null;
+        
+        // Laço que percorre a lista de repetidas pessoais para encontrar a figura que o usuário deseja trocar, 
+        // comparando se nome e número correspondem.
+        // Variável de objeto da figura para trocar é preenchida por um da lista caso haja match, e o laço é interrompido.
+        for (Figura figura : lista_repetidas_pessoais) {
+            if (figura.getNomeFigura().equalsIgnoreCase(nomeFigura) && figura.getNumeroFigura() == numeroFigura) {
+                figuraParaTrocar = figura;
+                break;
+            }
+        }
+        
+        // Se a figura para trocar foi encontrada, ela é removida da lista de repetidas pessoais e o CSV é atualizado.
+        if (figuraParaTrocar != null) {
+            lista_repetidas_pessoais.remove(figuraParaTrocar);
+            salvarCsv("figuras_repetidas_pessoais.csv", lista_repetidas_pessoais);
+            System.out.println("Troca registrada com sucesso!");
+        } else {
+            System.out.println("Figura não encontrada nas repetidas pessoais.");
+        }
     }
 
     /**
@@ -116,7 +197,7 @@ public class Figura {
      * @param nomeArquivo
      * @param listaDestino
      */
-    private void carregarCsv(String nomeArquivo, List<Figura> listaDestino) {
+    private static void carregarCsv(String nomeArquivo, List<Figura> listaDestino) {
         Path caminho = Paths.get(nomeArquivo);
 
         if (!Files.exists(caminho)) {
@@ -167,7 +248,7 @@ public class Figura {
      * @param nomeArquivo
      * @param listaOrigem
      */
-    private void salvarCsv(String nomeArquivo, List<Figura> listaOrigem) {
+    private static void salvarCsv(String nomeArquivo, List<Figura> listaOrigem) {
         Path caminho = Paths.get(nomeArquivo);
 
         try (BufferedWriter escritor = Files.newBufferedWriter(
