@@ -3,7 +3,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import Figura;
@@ -17,27 +16,33 @@ public static void main(String[] args) {
     System.out.println("Menu:\r\n" + //
                 "1-Cadastrar/listar figuras repitidas pessoais\r\n" + //
                 "2-Cadastrar/listar figuras desejadas pessoais\r\n" + //
-                "3-Cadastrar/listar figuras repitidas de outro + match\r\n" + //
-                "4-Cadastrar/listar figuras desejadas de outro + match\r\n" + //
+                "3-Mostrar match de figuras desejadas pessoais com repetidas do outro, e repitidas pessoais com desejadas do outro\r\n" + //
+                "4-Registrar troca (atualizar registro de repetidas e desejadas pessoais)\r\n" + //
                 "5-Sair\r\n" + //
                 "Opcao:");
     Scanner opcao = new Scanner(System.in);
 
     // 
     do {
-         switch (opcao.nextLine()) {
+        switch (opcao.nextLine()) {
             case "1":
-                cadastrar_repitidas_pessoais(lista_repetidas_pessoais);
+                Figura.cadastrar_repitidas_pessoais(lista_repetidas_pessoais);
                 break;
             case "2":
-                cadastrar_desejadas_pessoais(lista_desejadas_pessoais);
+                Figura.cadastrar_desejadas_pessoais(lista_desejadas_pessoais);
                 break;
             case "3":
+                Figura.mostrar_match(lista_desejadas_pessoais, lista_repetidas_outro, lista_repetidas_pessoais, lista_desejadas_outro);
+                break;
+            case "4":
+                Figura.registrar_troca(lista_repetidas_pessoais);
+                break;
+            case "5":
                 System.out.println("Saindo...");
                 break;
             default:
                 System.out.println("Valor inválido: " + opcao.nextLine());
         }
-    } while (!opcao.nextLine().equals("3"));
+    } while (!opcao.nextLine().equals("5"));
     opcao.close();
 }
