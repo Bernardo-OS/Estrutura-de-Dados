@@ -68,7 +68,7 @@ public class Figura {
             System.out.println("Figura: " + figura.getNomeFigura() + ", Número: " + figura.getNumeroFigura() + ", Descrição: " + figura.getDescricao() + ", Rara: " + figura.isRara());
         }
         //sendo Java, necessita usar um scanner para ler os dados enformados pelo usuário como um input
-        //Depois criar um novo objeto figura, 
+        //Depois criar um novo objeto figura,
         //Após adicionando-o à lista para salvar no CSV correspondente pelo método salvarCsv.
         Scanner scanner = new Scanner(System.in);
         
@@ -95,7 +95,7 @@ public class Figura {
      * para novos registros, e depois salva no CSV para atualizar os resitros.
      * @param lista_repetidas_pessoais
      */
-    public static void cadastrar_repitidas_pessoais(List<Figura> lista_repetidas_pessoais) {
+    public static void cadastrar_repetidas_pessoais(List<Figura> lista_repetidas_pessoais) {
         for (Figura figura : lista_repetidas_pessoais) {
             System.out.println("Figura: " + figura.getNomeFigura() + ", Número: " + figura.getNumeroFigura() + ", Descrição: " + figura.getDescricao() + ", Rara: " + figura.isRara());
         }
@@ -133,14 +133,20 @@ public class Figura {
          * (pela função java equalsIgnoreCase que compara string ignorando maiúsculas/minúsculas), e Número, 
          * e se há match, exibe.
          */
+        int matchCount = 0; // Variável para contar o número de matches encontrados
         for (Figura desejada : lista_desejadas_pessoais) {
             for (Figura repetidaOutro : lista_repetidas_outro) {
                 if (desejada.getNomeFigura().equalsIgnoreCase(repetidaOutro.getNomeFigura()) &&
                     desejada.getNumeroFigura() == repetidaOutro.getNumeroFigura()) {
                     System.out.println("Match encontrado: " + desejada.getNomeFigura() + " - Número: " + desejada.getNumeroFigura());
+                    matchCount++;
                 }
             }
         }
+        if (matchCount == 0) {
+            System.out.println("Nenhum match encontrado entre desejadas pessoais e repetidas do outro.");
+        }
+        matchCount = 0; // Resetando a contagem para a próxima comparação
 
         System.out.println("\nFiguras repetidas pessoais que são desejadas do outro:");
         for (Figura repetida : lista_repetidas_pessoais) {
@@ -148,49 +154,82 @@ public class Figura {
                 if (repetida.getNomeFigura().equalsIgnoreCase(desejadaOutro.getNomeFigura()) &&
                     repetida.getNumeroFigura() == desejadaOutro.getNumeroFigura()) {
                     System.out.println("Match encontrado: " + repetida.getNomeFigura() + " - Número: " + repetida.getNumeroFigura());
+                    matchCount++;
                 }
             }
         }
+        if (matchCount == 0) {
+            System.out.println("Nenhum match encontrado entre repetidas pessoais e desejadas do outro.");
+        }
     }
 
+
     /**
-     * Lógica para registrar uma troca, onde o usuário informa o nome e número da figura que deseja trocar, e o programa verifica 
-     * se essa figura está na lista de repetidas pessoais. Se estiver, a figura é removida da lista de repetidas pessoais 
+     * Lógica para registrar uma troca, onde o usuário informa o nome e número das figuras que deseja trocar, e o programa verifica
+     * se a figura está na lista de repetidas pessoais, e a outra lista de desejadas do outro. Se estiver, a figura é removida da lista correspondente
      * e os arquivos CSV são atualizados.
-     * @param lista_repetidas_pessoais
      * @param lista_desejadas_pessoais
+     * @param lista_repetidas_pessoais
      */
-    public static void registrar_troca(List<Figura> lista_repetidas_pessoais) {
+    public static void registrar_troca(List<Figura> lista_desejadas_pessoais, List<Figura> lista_repetidas_pessoais) {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("Digite o nome da figura que deseja trocar:");
-        String nomeFigura = scanner.nextLine();
+        System.out.println("Digite o nome da figura que obteve:");
+        String nomeFiguraObteve = scanner.nextLine();
         
-        System.out.println("Digite o número da figura que deseja trocar:");
-        int numeroFigura = scanner.nextInt();
-        scanner.nextLine(); // Limpa o buffer
+        System.out.println("Digite o número da figura que obteve:");
+        int numeroFiguraObteve = scanner.nextInt();
+        scanner.nextLine();
+
+        Figura figuraObteve = null;
         
-        Figura figuraParaTrocar = null;
-        
-        // Laço que percorre a lista de repetidas pessoais para encontrar a figura que o usuário deseja trocar, 
+        // Laço que percorre a lista de desejadas pessoais para encontrar a figura que o usuário recebeu,
         // comparando se nome e número correspondem.
-        // Variável de objeto da figura para trocar é preenchida por um da lista caso haja match, e o laço é interrompido.
-        for (Figura figura : lista_repetidas_pessoais) {
-            if (figura.getNomeFigura().equalsIgnoreCase(nomeFigura) && figura.getNumeroFigura() == numeroFigura) {
-                figuraParaTrocar = figura;
+        // Variável de objeto da figura que obteve é preenchida por um da lista caso haja match, e o laço é interrompido.
+        for (Figura figura : lista_desejadas_pessoais) {
+            if (figura.getNomeFigura().equalsIgnoreCase(nomeFiguraObteve) && figura.getNumeroFigura() == numeroFiguraObteve) {
+                figuraObteve = figura;
                 break;
             }
         }
         
-        // Se a figura para trocar foi encontrada, ela é removida da lista de repetidas pessoais e o CSV é atualizado.
-        if (figuraParaTrocar != null) {
-            lista_repetidas_pessoais.remove(figuraParaTrocar);
+        // Se a figura para trocar foi encontrada, ela é removida da lista de desejadas pessoais e o CSV é atualizado.
+        if (figuraObteve != null) {
+            lista_desejadas_pessoais.remove(figuraObteve);
+            salvarCsv("figuras_desejadas_pessoais.csv", lista_desejadas_pessoais);
+            System.out.println("Figurinha registrada com sucesso!");
+        } else {
+            System.out.println("Figura não encontrada nas desejadas pessoais.");
+        }
+        
+        System.out.println("Digite o nome da figura que deu:");
+        String nomeFiguraDeu = scanner.nextLine();
+        
+        System.out.println("Digite o número da figura que deu:");
+        int numeroFiguraDeu = scanner.nextInt();
+        scanner.nextLine(); // Limpa o buffer
+
+        Figura figuraDeu = null;
+
+        // Laço que percorre a lista de repetidas pessoais para encontrar a figura que o usuário deu em troca,
+        // comparando se nome e número correspondem.
+        // Variável de objeto da figura que deu é preenchida por um da lista caso haja match, e o laço é interrompido.
+        for (Figura figura : lista_repetidas_pessoais) {
+            if (figura.getNomeFigura().equalsIgnoreCase(nomeFiguraDeu) && figura.getNumeroFigura() == numeroFiguraDeu) {
+                figuraDeu = figura;
+                break;
+            }
+        }
+
+        if (figuraDeu != null) {
+            lista_repetidas_pessoais.remove(figuraDeu);
             salvarCsv("figuras_repetidas_pessoais.csv", lista_repetidas_pessoais);
-            System.out.println("Troca registrada com sucesso!");
+            System.out.println("Figurinha removida das repetidas pessoais com sucesso!");
         } else {
             System.out.println("Figura não encontrada nas repetidas pessoais.");
         }
     }
+
 
     /**
      * Carrega os dados de um arquivo CSV para a lista de figuras correspondente.
