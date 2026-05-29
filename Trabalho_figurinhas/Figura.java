@@ -11,12 +11,15 @@ import java.util.Scanner;
 import java.text.Normalizer;
 
 /**
- * Anotação lógica para peso de figurinhas:
- * Bronze: 2 Roxas
- * Prata: 5 Roxas || 2.5 Bronzes
- * Ouro: 10 Roxas || 6 Bronzes || 2 Pratas
+ * Representa um objeto Figura no sistema.
+ * Esta classe é usada para armazenar as características e comportamentos
+ * de uma figurinha 
+ * atributos: nome, numero, descrição e se é rara.
+ * funções como realizar registros, organizar e tratar os dados para evitar erros
+ * 
+ * @author Bernardo de Oliveira dos Santos
+ * @version 1.4
  */
-
 public class Figura {
     private String nomeFigura;
     private String numeroFigura;
