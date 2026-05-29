@@ -25,7 +25,7 @@ class main_figurinhas {
                         "1-Cadastrar/listar figuras repitidas pessoais\r\n" +
                         "2-Cadastrar/listar figuras desejadas pessoais\r\n" +
                         "3-Mostrar match de figuras desejadas pessoais com repetidas do outro, e repitidas pessoais com desejadas do outro\r\n" +
-                        "4-Registrar troca (retirar um registro de desejada, e outro de repetida pessoal)\r\n" +
+                        "4-Registrar troca (retirar uma desejada e outra repetida pessoal)\r\n" +
                         "5-Sair\r\n" +
                         "Opcao:");
 
