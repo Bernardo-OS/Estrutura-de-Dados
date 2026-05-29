@@ -6,7 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Comparator;
 import java.util.Scanner;
+import java.text.Normalizer;
 
 /**
  * Anotação lógica para peso de figurinhas:
@@ -17,11 +19,11 @@ import java.util.Scanner;
 
 public class Figura {
     private String nomeFigura;
-    private int numeroFigura;
+    private String numeroFigura;
     private String descricao;
     private boolean rara;
 
-    public Figura(String nomeFigura, int numeroFigura, String descricao, boolean rara) {
+    public Figura(String nomeFigura, String numeroFigura, String descricao, boolean rara) {
         this.nomeFigura = nomeFigura;
         this.numeroFigura = numeroFigura;
         this.descricao = descricao;
@@ -32,7 +34,7 @@ public class Figura {
         return nomeFigura;
     }
 
-    public int getNumeroFigura() {
+    public String getNumeroFigura() {
         return numeroFigura;
     }
 
@@ -58,6 +60,73 @@ public class Figura {
         carregarCsv("figuras_desejadas_outro.csv", lista_desejadas_outro);
     }
 
+
+    /**
+     * Normaliza o texto, removendo acentos e espaços, e convertendo para minúsculas.
+     * @param texto
+     * @return textoTratado
+     */
+    public static String normalizarTexto(String texto) {
+        //Método separado utiliza método externo Java Normalizer para tratar os valores para ter menos risco de falhas por erro de digitação do usuário
+        //Após verificar se é nulo para evitar exceção NullPointerException, cria variável para saída com texto tratado para comparação, 
+        //Substituindo acentos por equivalentes sem acentos, removendo espaços, e convertendo para minúsculas.
+        if (texto == null) return "";
+        String textoTratado = Normalizer.normalize(texto, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+        //System.out.println(textoTratado);
+        return textoTratado.trim().replaceAll("\\s+", "").toLowerCase();
+    }
+
+
+    /**
+     * Lógica para cadastrar figuras repetidas pessoais, exibindo as já cadastradas, fazendo leitura por meio do scanner 
+     * para novos registros, e depois salva no CSV para atualizar os resitros.
+     * @param lista_repetidas_pessoais
+     */
+    public static void cadastrar_repetidas_pessoais(List<Figura> lista_repetidas_pessoais) {
+        for (Figura figura : lista_repetidas_pessoais) {
+            System.out.println("Figura: " + figura.getNomeFigura() + ", Número: " + figura.getNumeroFigura() + ", Descrição: " + figura.getDescricao() + ", Rara: " + figura.isRara());
+        }
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("Digite o nome da figura repetida:");
+        String nomeFigura = scanner.nextLine();
+        
+        String numeroFigura = "";
+
+        do{
+            System.out.println("Digite o número da figura repetida:");
+            numeroFigura = scanner.nextLine();
+            if (!numeroFigura.matches("\\d+")) {
+                System.out.println("Número inválido, digite apenas número positivo.");
+            }
+            else {
+                break;
+            }
+        } while (true);
+        // Loop que só sai se o valor digitado é apenas número e positivo, caso contrário, exibe mensagem de erro e retorna para a entrada.
+
+        System.out.println("Digite a descrição da figura repetida:");
+        String descricao = scanner.nextLine();
+        
+        boolean rara = false;
+        
+        Figura novaFigura = new Figura(nomeFigura, numeroFigura, descricao, rara);
+
+        for (Figura repetidaPessoal : lista_repetidas_pessoais) {
+            if (normalizarTexto(novaFigura.getNomeFigura()).equals(normalizarTexto(repetidaPessoal.getNomeFigura())) &&
+                novaFigura.getNumeroFigura().equals(repetidaPessoal.getNumeroFigura())) {
+                System.out.println("Figura já cadastrada.");
+                return;
+            }
+        }
+
+        lista_repetidas_pessoais.add(novaFigura);
+        lista_repetidas_pessoais.sort( Comparator.comparing(figura -> normalizarTexto(figura.getNomeFigura()))); // Ordena a lista de Figura pelo campo 'nome' em ordem alfabética
+        salvarCsv("figuras_repetidas_pessoais.csv", lista_repetidas_pessoais);
+        System.out.println("Figura cadastrada com sucesso.");
+    }
+
+
     /**
      * Lógica para cadastrar figuras desejadas pessoais, exibindo as já cadastradas, fazendo leitura por meio do scanner 
      * para novos registros, e depois salva no CSV para atualizar os resitros.
@@ -74,50 +143,42 @@ public class Figura {
         
         System.out.println("Digite o nome da figura desejada:");
         String nomeFigura = scanner.nextLine();
-        
-        System.out.println("Digite o número da figura desejada:");
-        int numeroFigura = scanner.nextInt();
-        scanner.nextLine(); // Limpa o buffer
-        
+
+        String numeroFigura = "";
+
+        do{
+            System.out.println("Digite o número da figura desejada:");
+            numeroFigura = scanner.nextLine();
+            if (!numeroFigura.matches("\\d+")) {
+                System.out.println("Número inválido, digite apenas número positivo.");
+            }
+            else {
+                break;
+            }
+        } while (true);
+        // Loop que só sai se o valor digitado é apenas número e positivo, caso contrário, exibe mensagem de erro e retorna para a entrada.
+
         System.out.println("Digite a descrição da figura desejada:");
         String descricao = scanner.nextLine();
         
         boolean rara = false;
         
         Figura novaFigura = new Figura(nomeFigura, numeroFigura, descricao, rara);
+
+        for (Figura desejadaPessoal : lista_desejadas_pessoais) {
+            if (normalizarTexto(novaFigura.getNomeFigura()).equals(normalizarTexto(desejadaPessoal.getNomeFigura())) &&
+                novaFigura.getNumeroFigura().equals(desejadaPessoal.getNumeroFigura())) {
+                System.out.println("Figura já cadastrada.");
+                return;
+            }
+        }
+
         lista_desejadas_pessoais.add(novaFigura);
-        
+        lista_desejadas_pessoais.sort( Comparator.comparing(figura -> normalizarTexto(figura.getNomeFigura()))); // Ordena a lista de Figura pelo campo 'nome' em ordem alfabética
         salvarCsv("figuras_desejadas_pessoais.csv", lista_desejadas_pessoais);
+        System.out.println("Figura cadastrada com sucesso.");
     }
 
-    /**
-     * Lógica para cadastrar figuras repetidas pessoais, exibindo as já cadastradas, fazendo leitura por meio do scanner 
-     * para novos registros, e depois salva no CSV para atualizar os resitros.
-     * @param lista_repetidas_pessoais
-     */
-    public static void cadastrar_repetidas_pessoais(List<Figura> lista_repetidas_pessoais) {
-        for (Figura figura : lista_repetidas_pessoais) {
-            System.out.println("Figura: " + figura.getNomeFigura() + ", Número: " + figura.getNumeroFigura() + ", Descrição: " + figura.getDescricao() + ", Rara: " + figura.isRara());
-        }
-        Scanner scanner = new Scanner(System.in);
-        
-        System.out.println("Digite o nome da figura repetida:");
-        String nomeFigura = scanner.nextLine();
-        
-        System.out.println("Digite o número da figura repetida:");
-        int numeroFigura = scanner.nextInt();
-        scanner.nextLine(); // Limpa o buffer
-        
-        System.out.println("Digite a descrição da figura repetida:");
-        String descricao = scanner.nextLine();
-        
-        boolean rara = false;
-        
-        Figura novaFigura = new Figura(nomeFigura, numeroFigura, descricao, rara);
-        lista_repetidas_pessoais.add(novaFigura);
-        
-        salvarCsv("figuras_repetidas_pessoais.csv", lista_repetidas_pessoais);
-    }
 
     /**
      * Lógica para mostrar os matches entre as figuras desejadas pessoais e repetidas do outro, e entre as figuras repetidas pessoais e desejadas do outro.
@@ -136,8 +197,8 @@ public class Figura {
         int matchCount = 0; // Variável para contar o número de matches encontrados
         for (Figura desejada : lista_desejadas_pessoais) {
             for (Figura repetidaOutro : lista_repetidas_outro) {
-                if (desejada.getNomeFigura().equalsIgnoreCase(repetidaOutro.getNomeFigura()) &&
-                    desejada.getNumeroFigura() == repetidaOutro.getNumeroFigura()) {
+                if (normalizarTexto(desejada.getNomeFigura()).equalsIgnoreCase(normalizarTexto(repetidaOutro.getNomeFigura())) &&
+                    normalizarTexto(desejada.getNumeroFigura()).equals(normalizarTexto(repetidaOutro.getNumeroFigura()))) {
                     System.out.println("Match encontrado: " + desejada.getNomeFigura() + " - Número: " + desejada.getNumeroFigura());
                     matchCount++;
                 }
@@ -151,8 +212,8 @@ public class Figura {
         System.out.println("\nFiguras repetidas pessoais que são desejadas do outro:");
         for (Figura repetida : lista_repetidas_pessoais) {
             for (Figura desejadaOutro : lista_desejadas_outro) {
-                if (repetida.getNomeFigura().equalsIgnoreCase(desejadaOutro.getNomeFigura()) &&
-                    repetida.getNumeroFigura() == desejadaOutro.getNumeroFigura()) {
+                if (normalizarTexto(repetida.getNomeFigura()).equalsIgnoreCase(normalizarTexto(desejadaOutro.getNomeFigura())) &&
+                    normalizarTexto(repetida.getNumeroFigura()).equals(normalizarTexto(desejadaOutro.getNumeroFigura()))) {
                     System.out.println("Match encontrado: " + repetida.getNomeFigura() + " - Número: " + repetida.getNumeroFigura());
                     matchCount++;
                 }
@@ -178,8 +239,13 @@ public class Figura {
         String nomeFiguraObteve = scanner.nextLine();
         
         System.out.println("Digite o número da figura que obteve:");
-        int numeroFiguraObteve = scanner.nextInt();
-        scanner.nextLine();
+        String numeroFiguraObteve = scanner.nextLine();
+
+        if (!numeroFiguraObteve.matches("\\d+")) {
+            System.out.println("Número inválido, digite apenas número positivo.");
+            return;
+        }
+        // If verifica se o valor digitado é apenas número e positivo, caso contrário, exibe mensagem de erro e retorna para o menu.
 
         Figura figuraObteve = null;
         
@@ -187,7 +253,7 @@ public class Figura {
         // comparando se nome e número correspondem.
         // Variável de objeto da figura que obteve é preenchida por um da lista caso haja match, e o laço é interrompido.
         for (Figura figura : lista_desejadas_pessoais) {
-            if (figura.getNomeFigura().equalsIgnoreCase(nomeFiguraObteve) && figura.getNumeroFigura() == numeroFiguraObteve) {
+            if (normalizarTexto(figura.getNomeFigura()).equalsIgnoreCase(normalizarTexto(nomeFiguraObteve)) && figura.getNumeroFigura().equals(numeroFiguraObteve)) {
                 figuraObteve = figura;
                 break;
             }
@@ -197,7 +263,7 @@ public class Figura {
         if (figuraObteve != null) {
             lista_desejadas_pessoais.remove(figuraObteve);
             salvarCsv("figuras_desejadas_pessoais.csv", lista_desejadas_pessoais);
-            System.out.println("Figurinha registrada com sucesso!");
+            System.out.println("Figurinha removida das desejadas pessoais com sucesso!");
         } else {
             System.out.println("Figura não encontrada nas desejadas pessoais.");
         }
@@ -206,8 +272,7 @@ public class Figura {
         String nomeFiguraDeu = scanner.nextLine();
         
         System.out.println("Digite o número da figura que deu:");
-        int numeroFiguraDeu = scanner.nextInt();
-        scanner.nextLine(); // Limpa o buffer
+        String numeroFiguraDeu = scanner.nextLine();
 
         Figura figuraDeu = null;
 
@@ -215,7 +280,7 @@ public class Figura {
         // comparando se nome e número correspondem.
         // Variável de objeto da figura que deu é preenchida por um da lista caso haja match, e o laço é interrompido.
         for (Figura figura : lista_repetidas_pessoais) {
-            if (figura.getNomeFigura().equalsIgnoreCase(nomeFiguraDeu) && figura.getNumeroFigura() == numeroFiguraDeu) {
+            if (normalizarTexto(figura.getNomeFigura()).equalsIgnoreCase(normalizarTexto(nomeFiguraDeu)) && figura.getNumeroFigura().equals(numeroFiguraDeu)) {
                 figuraDeu = figura;
                 break;
             }
@@ -265,9 +330,9 @@ public class Figura {
 
                 String nomeFigura = partes[0].trim();
 
-                int numeroFigura;
+                String numeroFigura = partes[1].trim();
                 try {
-                    numeroFigura = Integer.parseInt(partes[1].trim());
+                    Integer.parseInt(numeroFigura);
                 } catch (NumberFormatException e) {
                     continue;
                 }
